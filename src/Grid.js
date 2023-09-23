@@ -1,6 +1,7 @@
 import Square from "./Square";
 import { useState } from "react";
 
+/* Component representing a 3x3 tic-tac-toe grid */
 export default function Grid( {
     column_length,
     row_length,
@@ -9,29 +10,33 @@ export default function Grid( {
     onPlay} ) {
     const [winner, setWinner] = useState("");
 
+    /* Function for handling a click on a square. If the square is filled or a winner exists,
+        this function returns early. Otherwise, it edits a copy of the grid to add a new X or O
+        and calls onPlay on that copy */
     function handleClick(i) {
         setWinner(calculateWinner(squares));
-        if (squares[i]) { // If the square is already filled, do nothing
+        if (squares[i]) {
             return;
         }
-        if (winner) { // If there's a winner, do nothing
+        if (winner) {
             return;
         }
-
         const nextSquares = squares.slice();
         nextSquares[i] = xIsNext ? "X" : "O";
         onPlay(nextSquares);
-        
       }
 
+    /* displays the grid */
     function displayGrid() {
-        const grid = Array.from({length: column_length}, (v, i) => i)
+        return Array
+            .from({length: column_length}, (v, i) => i)
             .map(i => displayRow(i));
-        return grid;
     }
 
+    /* displays a single row in the grid */
     function displayRow(i) {
-        const row = Array.from({length: row_length}, (v, i) => i)
+        const row = Array
+            .from({length: row_length}, (v, i) => i)
             .map(j => {
                 let index = i*3 + j;
                 return <Square
@@ -41,22 +46,24 @@ export default function Grid( {
         return <div>{row}</div>
     }
 
+    /* displays a status message for the user */
     function displayStatus() {
         const winner = calculateWinner(squares);
-        let status = winner
+        const nextPlayer = xIsNext ? "X" : "O";
+        return winner
             ? winner + " wins!"
-            : (xIsNext ? "X" : "O") + " goes next";
-        return status
+            : nextPlayer + " goes next";
     }
-        
-    return (<>
-        <div>{displayStatus()}</div>
-        <div>{displayGrid()}</div>
+
+    return (
+        <>
+            <div>{displayStatus()}</div>
+            <div>{displayGrid()}</div>
         </>
     );
-
 }
 
+/* Given a grid state, calculates the winner - X, O, or null (no winner yet) */
 function calculateWinner(squares) {
     const lines = [
         [0, 1, 2],
